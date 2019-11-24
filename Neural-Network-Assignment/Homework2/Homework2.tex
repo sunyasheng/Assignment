@@ -1,0 +1,35 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{bm}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+
+\begin{document}
+
+
+\title{Homework 2}
+\author{Yasheng Sun}
+\date{}
+
+\maketitle
+[The project code is on my github https://github.com/sunyasheng/Neural-Network-Assignment] \\
+\section{Solution 1}
+Checking their code of Multi-Classifier, we can find they use one-vs-one and voting strategy to do multi-classification.\\
+a) If using the provided Multi-Classifier in libSVM without Model Selection$(C = 1, gamma = 1/numfeatures)$, the accuracy is 0.439947.\\
+b) If using the one-vs-rest strategy without Model Selection$(C = 1, gamma = 1/numfeatures)$, the accuracy is 0.441934.\\
+\section{Solution 2}
+a)
+Under usage of the min-max module strategy with random task decomposition to balance the training set, the accurracy in different module size is reported below. Here we randomly select 20000 training samples and 5000 test samples due to computation capablity of my computer.\\
+\begin{center}
+ size  accuracy\\
+6000  0.4254\\
+4000  0.4498\\
+2000  0.4332\\
+1000  0.4274\\
+\end{center}
+b) Since I have no access to what the feature means, I have no idea how to partition the training set based on the prior knowledge. So this part is unfinished yet.
+
+\end{document}
