@@ -1,0 +1,219 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+    \usepackage{cvpr}
+    \usepackage{times}
+    \usepackage{epsfig}
+    \usepackage{graphicx}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    
+    % Include other packages here, before hyperref.
+    
+    % If you comment hyperref and then uncomment it, you should delete
+    % egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+    % run, let it finish, and you should be clear).
+    \usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+    
+    \cvprfinalcopy % *** Uncomment this line for the final submission
+    
+    \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+    \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+    
+    % Pages are numbered in submission mode, and unnumbered in camera-ready
+    \ifcvprfinal\pagestyle{empty}\fi
+    \begin{document}
+    
+    %%%%%%%%% TITLE
+    \title{Technical Report for Second Project in Parallel Computing}
+    
+    \author{Yasheng Sun\\
+    117020910076\\
+    {\tt\small sunyasheng123@gmail.com}
+    % For a paper whose authors are all at the same institution,
+    % omit the following lines up until the closing ``}''.
+    % Additional authors and addresses can be added with ``\and'',
+    % just like the second author.
+    % To save space, use either the email address or home page, not both
+    }
+    
+    \maketitle
+    %\thispagestyle{empty}
+    
+    %%%%%%%%% ABSTRACT
+    \begin{abstract}
+       This report concludes the second project in parallel computing. 
+       This project involves the basic usage of OpenMP function and 
+       application of OpenMP in real world. We achieve the 
+       approximation of $\pi$ following the previous project but through
+       integration under OpenMP framework. Furthermore, we explore the
+       usage of OpenMP in some advanced data structure such as link
+       list instead of naive array data structure. All my code is publicly available on my github 
+       \url{https://github.com/sunyasheng/Parallel-Computing}.
+
+    \end{abstract}
+    
+    \section{Introduction}
+    Project involves the understanding and application of OpenMP. In this project, we first put
+    forward a more elegant way to compute $\pi$ through integration than the method in project 1. 
+    Then we focus on the application of OpenMP to a more complicated data structure such as link list
+    instead of naive array form[1]. A simple but tedious method is first proposed and then we refine 
+    the code based on some advanced characteristic such as Task in OpenMP.
+    
+    %-------------------------------------------------------------------------
+    \section{Estimate $\pi$ through integration}
+    \subsection{Methodology}
+    In previous project we estimate $\pi$ by Mento Carto which is not very accurate. Here we 
+    estimate $\pi$ based on integration. 
+    $$\int_0^1 \frac{1}{1 + x^2} dx = \frac{\pi}{4}$$
+    This integration is computed by summing up all the areas of rectangles below the function curve.
+    More rectangles are used, more precise the estiamted integration is. 
+    
+    From Figure \ref{sample_code} we can find that usage of OpenMP is
+    very elegant and concise. We only need to note where we want to 
+    parallel and what we want to reduce and everything will be finished
+    by the complier. It is pretty convenient that less code is needed to do reduction in a neat fashion
+    under the OpenMP framework. 
+
+    
+    \subsection{Result}
+    Here we present the computation result under different number of threads when
+    we divide the integration interval to 1000000000 segments in the Table~\ref{estimation_performance}.
+    The estimated value is pretty close to the ground truth value. This 
+    table shows us the power of parallelization in efficiency improvement. By using 
+    two threads, we almost obtain double productivity compared with the traditional
+    serial programing pattern. In the meantime, the complier have done the reduction
+     automatically for us, which simplifies the programing significantly.
+
+
+    %%%%%%%%% BODY TEXT
+    \section{OpenMP Parallization in Link List}
+    So far, the application of OpenMP we illustrated is limited in simple data 
+    structure such as array or matrix. More complicated data structure is required
+    in real world application to describe and store data.
+    \subsection{Problem Statement}
+    We formulate this problem as shown in Figure~\ref{problem_statement}. Many tasks
+    is stored by a link list, which brings difficulty to direct parallelization under
+    OpenMP framework. 
+    \begin{figure}[t]
+        \begin{center}
+           \includegraphics[width=1.\linewidth]{images/sample_code.png}
+        \end{center}
+           \caption{Clip of the program in computation of $\pi$ under OpenMP framework.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{sample_code}
+    \end{figure}
+    \begin{table}
+        \begin{center}
+        \begin{tabular}{|c|c|c|}
+        \hline
+        number of threads & estimated value & consumed time\\
+        \hline
+        1 & 3.14159 &5.59387s \\
+        2 & 3.14159 &2.69163s \\
+        \hline
+        \end{tabular}
+        \end{center}
+        \caption{Estimation Performance under different number of involved threads.}
+        \label{estimation_performance}
+    \end{table}
+    \begin{figure}[t]
+        \begin{center}
+           \includegraphics[width=1.0\linewidth]{images/problem_statement.png}
+        \end{center}
+           \caption{The toy problem is formulated to a linked list of tasks.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{problem_statement}
+    \end{figure}
+
+    \subsection{Naive Reduction}
+    \begin{figure}[t]
+        \begin{center}
+           \includegraphics[width=1.0\linewidth]{images/naive_implementation.png}
+        \end{center}
+           \caption{Implementation of naive conversion of the link list task.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{naive_implementation}
+    \end{figure}
+
+    A intuitive solution is to represent the orignal
+    link list structure with array we are familiar with as shown in 
+    Figure~\ref{naive_implementation}. This strategy requires us to 
+    visit all the elements in link list and reorgnize 
+    those elements to the array form. Once we obtain the array form, we 
+    can solve this problem with the approach above. 
+
+    
+    \subsection{Result of Naive Implementation}
+    Table~\ref{naive_serial} shows the result under 
+    the naive implementation of reduction and pure serial 
+    pattern. Obviously, this manual parallelization perform better 
+    than the pure serial operation. But this strategy is not 
+    scalable to other scenario since it requires specified nasty manual
+    array structure building operation in a certain problem. In
+    next section, we will introduce a new characteristic in
+    OpenMP to tackle this problem. 
+
+    \subsection{Reduction by Task}
+    When we use the task command, we can solve this problem 
+    in an elegant fashion as shown in Figure ~\ref{reduction_by_task}.
+    Tasks are independent units of work, which are composed of
+    code to execuate, data environment and internel control 
+    variable. If we assign a segment of code as Task, the system 
+    runtime will automatically create multiple tasks one for each
+    thread. 
+ 
+
+    \begin{table}
+        \begin{center}
+        \begin{tabular}{|c|c|c|}
+        \hline
+        Pattern &  consumed time\\
+        \hline
+        Serial Pattern & 10.840s \\
+        Navie Reduction & 7.009s \\
+        Task Reduction &  6.840s\\
+        \hline
+        \end{tabular}
+        \end{center}
+        \caption{Comparsion between different execuation patterns.}
+        \label{naive_serial}
+    \end{table}
+
+    \begin{figure}[t]
+        \begin{center}
+           \includegraphics[width=1.0\linewidth]{images/reduction_by_task.png}
+        \end{center}
+           \caption{Clip of code to parallel the link list task with the task techinque.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{reduction_by_task}
+    \end{figure}
+    
+    \section{Conclusion}
+    In this project, we explore the basic usage of OpenMP function and 
+    application of OpenMP in more complicated scenario. We achieve the 
+    approximation of $\pi$ following the previous project but through
+    integration under OpenMP framework in a neat fashion. Furthermore, we explore the
+    usage of OpenMP in some advanced data structure such as link
+    list instead of naive array data structure. Experiment shows that
+    we can achieve parallelization over more complicated data structure 
+    with task techinque under OpenMP framework. 
+
+    {\small
+    \bibliographystyle{ieee}
+    \bibliography{egbib}
+    }
+    \begin{thebibliography}{1}
+
+    \bibitem{IEEEhowto:kopka}
+    % H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+    % 0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+    % D. Pathak, R. Girshick, P. Doll ́ ar, T. Darrell, and B. Hariha-ran.
+    % Learning features by watching objects move. In \emph{CVPR}, 2017.
+    https://www.openmp.org/wp-content/uploads/Intro\_To\_OpenMP\_Mattson.pdf
+    \end{thebibliography}
+
+    \end{document}

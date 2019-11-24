@@ -1,0 +1,179 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+    \usepackage{cvpr}
+    \usepackage{times}
+    \usepackage{epsfig}
+    \usepackage{graphicx}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    
+    % Include other packages here, before hyperref.
+    
+    % If you comment hyperref and then uncomment it, you should delete
+    % egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+    % run, let it finish, and you should be clear).
+    \usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+    
+    \cvprfinalcopy % *** Uncomment this line for the final submission
+    
+    \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+    \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+    
+    % Pages are numbered in submission mode, and unnumbered in camera-ready
+    \ifcvprfinal\pagestyle{empty}\fi
+    \begin{document}
+    
+    %%%%%%%%% TITLE
+    \title{Technical Report for Third Project in Parallel Computing}
+    
+    \author{Yasheng Sun\\
+    117020910076\\
+    {\tt\small sunyasheng123@gmail.com}
+    % For a paper whose authors are all at the same institution,
+    % omit the following lines up until the closing ``}''.
+    % Additional authors and addresses can be added with ``\and'',
+    % just like the second author.
+    % To save space, use either the email address or home page, not both
+    }
+    
+    \maketitle
+    %\thispagestyle{empty}
+    
+    %%%%%%%%% ABSTRACT
+    \begin{abstract}
+       This report concludes the third project in parallel computing. This projcet target
+       at implementing word counting pragram using MapReduce. This is a pretty elementry task
+       in MapReduce Framework, which follows the classical MapReduce Pattern-Summarization Pattern.
+        We will explain whole workflow briefly in this report. 
+       All my code is publicly available on my github
+        \url{https://github.com/sunyasheng/Parallel-Computing}.
+
+    \end{abstract}
+    
+    %%%%%%%%% BODY TEXT
+    
+    
+    %-------------------------------------------------------------------------
+    \section{Data Preparation}
+    
+    In this project, we choose the novel Gone with The wind as the system input as is shown
+    in Fig.~\ref{gone_with_the_wind}. 
+    This novel contains 2657422 characters including Chinese, English and Punctuation.
+    Mixture of various types of languages and characters aims to mimic the true scenario
+    in real world.
+
+    \section{Methodology}
+
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=0.7\linewidth]{gone_with_the_wind.png}
+        \end{center}
+           \caption{Gone with the Wind}
+        \label{gone_with_the_wind}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+    In this section, the whole workflow of MapReduce is illustrated in Fig.~\ref{workflow}. 
+    The task of Mapper is to select every English item from orignal article and map
+    the corresponding item to 1. Then the output stream will be
+    shuffled, sorted and passed to Reducer. Reducer will go through all
+    the items and add up all the numbers for each item. 
+
+    Note that all English items have to be transported from the Mapper Node to Reducer Node,
+    which implies that if a certain English item will be transported mutiple times if it is 
+    repeated in an article many times. 
+    The inter-node transportation is usually very
+    expensive. To lower the amount of transportation, A practical technique Combiner is introduced
+    here to add up the number of items in its current Mapper Node.
+    The Combiner is essentially a lcoal reducer. With this pre-reduction, 
+    the transportation amount between different nodes can be decreased significantly.
+    
+    \section{Result}
+    
+    Only part output of this mapreduce task is shown in Fig.~\ref{output} because there are too 
+    many words to be completely presented here. The word and their frequency of exisitence are
+    listed row by row. 
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{workflow.png}
+        \end{center}
+           \caption{\label{workflow}The MapReduce workflow.}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{wordcount_output.png}
+        \end{center}
+           \caption{System output for word count program.}
+        \label{output}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+    
+    From Fig.~\ref{wordcount_info} we could know that the mapper task is 
+    split to two nodes and the output stream will be passed to one reduce 
+    node to finally summarize the result after map operation.
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{wordcount_info.png}
+        \end{center}
+           \caption{System information in MapReduce Task.}
+        \label{wordcount_info}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+
+    Fig.~\ref{with_combiner} shows that the Combiner technique significantly
+    reduces the amount of reduce input records and reduce shuffle bytes compared
+    with the traditional routine without Combiner as is shwon in Fig.~\ref{without_combiner}.
+    This improvement will play a more important role when it comes to a larger scale
+    dataset.
+
+    \section{Conclusion}
+    A sample word count program is presented in this project, by which we show the
+     MapReduce paradigme -- Summarization Pattern. A practical technique, 
+    Combiner, is introduced here to lower the transportation amount between 
+    Mapper Node and Reducer Node. Future work will involve more complicated problems
+    in large scale.
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{with_combiner.png}
+        \end{center}
+           \caption{The reduce input records and shuffle bytes information with Combiner.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{with_combiner}
+    \end{figure}    
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{without_combiner.png}
+        \end{center}
+           \caption{The reduce input records and shuffle bytes information without Combiner.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{without_combiner}
+    \end{figure}    
+    
+    {\small
+    \bibliographystyle{ieee}
+    \bibliography{egbib}
+    }
+    \begin{thebibliography}{1}
+
+    \bibitem{IEEEhowto:kopka}
+    % H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+    % 0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+    % D. Pathak, R. Girshick, P. Doll ́ ar, T. Darrell, and B. Hariha-ran.
+    % Learning features by watching objects move. In \emph{CVPR}, 2017.
+    \url{http://sunyasheng.github.io/}
+    \end{thebibliography}
+
+    \end{document}

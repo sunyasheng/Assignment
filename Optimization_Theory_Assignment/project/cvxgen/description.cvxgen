@@ -1,0 +1,44 @@
+# Produced by CVXGEN, 2018-06-02 01:51:06 -0400.
+# CVXGEN is Copyright (C) 2006-2017 Jacob Mattingley, jem@cvxgen.com.
+# The code in this file is Copyright (C) 2006-2017 Jacob Mattingley.
+# CVXGEN, or solvers produced by CVXGEN, cannot be used for commercial
+# applications without prior written permission from Jacob Mattingley.
+
+# Filename: description.cvxgen.
+# Description: A description of the CVXGEN problem.
+
+dimensions
+  n = 4
+  T = 25
+end
+
+parameters
+  A (n,n); B (n,1);
+  d (n,1);
+  Q (n,n) psd;
+  gamma positive;
+  sig_env (1,2) positive; sig_tra (1,2) positive; H (2,4);
+  Pos (2,1) nonnegative;
+  F_max; F_max_slew;
+  x0 (n,1);
+  G[t] (2), t = 15..T+1
+end
+
+variables
+  F[t], t = 0..T
+  x[t] (n), t = 0..T+1
+  S_env[t] (2), t = 15..T+1
+  S_tra[t] (2), t = 15..T+1
+end
+
+minimize
+  sum[t = 0..T](quad(x[t], Q)) + gamma*sum[t = 1..T](quad(F[t]-F[t-1])) + sum[t = 15..T+1](sig_env*S_env[t]) + sum[t = 15..T+1](sig_tra*S_tra[t])
+subject to
+  x[0] == x0
+  x[t+1] == A*x[t] + B*F[t] + d, t = 0..T
+  abs(F[t]) <= F_max, t=0..T
+  abs(F[t] - F[t-1]) <= F_max_slew, t = 1..T
+  H*x[t] <= G[t] + S_env[t] + S_tra[t], t=15..T+1
+  S_env[t] >= Pos, t = 15..T+1
+  S_tra[t] >= Pos, t = 15..T+1
+end

@@ -1,0 +1,180 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+    \usepackage{cvpr}
+    \usepackage{times}
+    \usepackage{epsfig}
+    \usepackage{graphicx}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    
+    % Include other packages here, before hyperref.
+    
+    % If you comment hyperref and then uncomment it, you should delete
+    % egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+    % run, let it finish, and you should be clear).
+    \usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+    
+    \cvprfinalcopy % *** Uncomment this line for the final submission
+    
+    \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+    \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+    
+    % Pages are numbered in submission mode, and unnumbered in camera-ready
+    \ifcvprfinal\pagestyle{empty}\fi
+    \begin{document}
+    
+    %%%%%%%%% TITLE
+    \title{Technical Report for Fourth Project in Parallel Computing}
+    
+    \author{Yasheng Sun\\
+    117020910076\\
+    {\tt\small sunyasheng123@gmail.com}
+    % For a paper whose authors are all at the same institution,
+    % omit the following lines up until the closing ``}''.
+    % Additional authors and addresses can be added with ``\and'',
+    % just like the second author.
+    % To save space, use either the email address or home page, not both
+    }
+    
+    \maketitle
+    %\thispagestyle{empty}
+    
+    %%%%%%%%% ABSTRACT
+    \begin{abstract}
+       This report concludes the fourth project in parallel computing. This projcet requires
+       us to compute the highest and lowest temperature in some specified cities, which involves
+       a classical mapreduce pattern -- Summarization Pattern. We generate 10000000 items in 5
+       cities and obtain the statistics of highest and lowest temperature through MapReduce technique. 
+       All my code is publicly available on my github
+        \url{https://github.com/sunyasheng/Parallel-Computing}.
+
+    \end{abstract}
+    
+    %%%%%%%%% BODY TEXT
+    
+    
+    %-------------------------------------------------------------------------
+    \section{Data Preparation}
+    
+    Downloading the history temperature of a certain city is a non-trivial thing, requring usage
+    of API to some website. Unfortunately, some project has been out of date such as weatherData project[1].
+    Therefore, we generate the data randomly to simulate this scenario without loss of generality.
+    The statistics of our generated data is shown in Fig.~\ref{statistics}. We generate our data according to Gaussian
+    distribution. The mean is set to 0 and the variance is set to 100. Temperature in 5 cities 
+    is generated and each city contains 10000000 weather items. 
+
+    
+    \section{Methodology}
+
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{data_statistics.png}
+        \end{center}
+           \caption{Statistics of the generated data.  The mean is set to 0 and the variance is set to 100.}
+        \label{statistics}       
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+    In this section, the whole workflow of MapReduce is illustrated in Fig.~\ref{workflow}. 
+    The task of Mapper is to select every item which contains a city name
+    and its corresponding temperature. Then the output stream will be
+    shuffled, sorted and passed to Reducer. Reducer will go through all
+    the items and maintain the highest and lowest temperature for each 
+    city. 
+
+    It is worthy to mention that the number of weather data transportation  
+    from mapper to reducer is huge. The inter-node transportation is usually
+    expensive. To lower the amount of transportation, Combiner is introduced
+    here to collect the highest and lowest temperature in one single data node.
+    The Combiner is essentially a lcoal reducer. With this pre-reduction, 
+    the transportation amount between different nodes can be decreased significantly.
+    
+    \section{Result}
+    
+    The output of this mapreduce task is shown in Fig.~\ref{output}. The highest
+    and lowest temperature for each city is given here. 
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{workflow.png}
+        \end{center}
+           \caption{\label{workflow}The MapReduce workflow.}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{output.png}
+        \end{center}
+           \caption{System output for the highest and lowest
+           temperature in those 5 cities.}
+        \label{output}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+    
+    From Fig.~\ref{system_info} we could know that the mapper task is 
+    split to five nodes and the output stream will be passed to one reduce 
+    node to finally summarize the result after map operation.
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{task_info.png}
+        \end{center}
+           \caption{System information in MapReduce Task.}
+        \label{system_info}
+        \label{fig:long}
+        \label{fig:onecol}
+    \end{figure}
+
+    Fig.~\ref{with_combiner} shows that the Combiner technique significantly
+    reduces the amount of reduce input records and reduce shuffle bytes compared
+    with the traditional routine without Combiner as is shwon in Fig.~\ref{without_combiner}.
+    This improvement will play a more important role when it comes to a larger scale
+    dataset.
+
+    \section{Conclusion}
+    We show the classical MapReduce paradigme -- Summarization Pattern by a
+    minimum/maximax search problem in this project. A practical technique, 
+    Combiner, is introduced here to lower the transportation amount between 
+    different node. Future work will involve realtime data grabbing and reducing task
+    under distributed computation framework.
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{detail_info.png}
+        \end{center}
+           \caption{The reduce input records and shuffle bytes information with Combiner.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{with_combiner}
+    \end{figure}    
+    \begin{figure}[t]
+        \begin{center}
+        % \fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+           \includegraphics[width=1.0\linewidth]{new_detail_info.png}
+        \end{center}
+           \caption{The reduce input records and shuffle bytes information without Combiner.}
+        \label{fig:long}
+        \label{fig:onecol}
+        \label{without_combiner}
+    \end{figure}    
+    
+    {\small
+    \bibliographystyle{ieee}
+    \bibliography{egbib}
+    }
+    \begin{thebibliography}{1}
+
+    \bibitem{IEEEhowto:kopka}
+    % H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+    % 0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+    % D. Pathak, R. Girshick, P. Doll ́ ar, T. Darrell, and B. Hariha-ran.
+    % Learning features by watching objects move. In \emph{CVPR}, 2017.
+    \url{http://ram-n.github.io/weatherData}
+    \end{thebibliography}
+
+    \end{document}

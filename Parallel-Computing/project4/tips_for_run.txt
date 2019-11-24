@@ -1,0 +1,20 @@
+Following the installation procdure[1], we first install the Hadoop and configure YARN. All the following commands are supposed to be executed under in $HADOOP_HOME.
+1. Start the Hadoop
+    ./sbin/start-dfs.sh
+2. Start the YARN
+    ./sbin/start-yarn.sh
+3. View the nodes information
+    ./sbin/mr-jobhistory-daemon.sh start historyserver
+4. Test the code
+    ./run.sh
+5. Copy the data to hdfs
+    ./bin/hdfs dfs -put ~/homework/Parallel-Computing/project4 project4
+6. Execute the MapReduce Job
+    $PROJECT3_PATH/run.sh
+7. Copy files to local machine
+    ./bin/hdfs dfs -get project4/output ./output
+8. Show the results
+     cat ./output/*
+
+Rerefence:
+[1] https://wangchangchung.github.io/2017/09/28/Ubuntu-16-04%E4%B8%8A%E5%AE%89%E8%A3%85Hadoop%E5%B9%B6%E6%88%90%E5%8A%9F%E8%BF%90%E8%A1%8C/

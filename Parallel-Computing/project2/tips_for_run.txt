@@ -1,0 +1,2 @@
+This project includes three programs. 
+Please uncomment the filename in run.sh to execuate the file.

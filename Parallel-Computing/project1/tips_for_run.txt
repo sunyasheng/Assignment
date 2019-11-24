@@ -1,0 +1,2 @@
+Modify the last parameter in run.sh as is shown below.
+mpirun -n 6 -loadbalance ./mpi_hello_world [num_elements_per_proc]

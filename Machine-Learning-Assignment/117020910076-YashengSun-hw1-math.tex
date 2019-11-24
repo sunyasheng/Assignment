@@ -1,0 +1,54 @@
+\documentclass[12pt,a4paper]{ctexart}
+\title{Homework 1 for Machine Learning}
+\date{\today}
+\author{Yasheng Sun 117020910076}
+\usepackage{indentfirst}
+\usepackage{tikz}
+\usepackage{ listings} 
+\usepackage{graphicx}
+\linespread{1.5}
+\usepackage{geometry}
+\geometry{left=2.0cm, right=2.0cm, top = 2.5cm, bottom = 2.5cm}
+\usetikzlibrary{arrows,shapes,chains}
+
+\setlength{\parindent}{2em}
+\pagestyle{plain}
+
+\begin{document}
+\begin{flushleft}
+
+\section*{Solution 1}
+The sum-of-squares error function is minimized if and only if when gradient of this function with respect to \textbf{w} equals zero. As is shown below.
+\begin{eqnarray*}
+\nabla_{\textbf{w}} E_{D}(\textbf{w}) = - \sum_{n=1}^{N} r_{n}({t_{n} - \textbf{w}^{T} \phi (\textbf{x}_{n}) })\phi (\textbf{x}_{n}) = 0
+\end{eqnarray*}
+Solve for \textbf{w}
+\begin{eqnarray*}
+\textbf{w} = (\sum_{n=1}^{N} r_{n} \phi (\textbf{x}_n) \phi (\textbf{x}_n)^{T} )^{-1}(\sum_{n=1}^{N} r_{n}t_{n} \phi (\textbf{x}_{n}))
+\end{eqnarray*}
+\section*{Solution 2}
+(a)Suppose the solution is $\beta ^{\star}$, it should satisfy the KKT constraint. 
+\begin{eqnarray*}
+\nabla _{\beta} F(\beta_{\star}, \lambda^{\star}) = (y - X\beta)^{T}(y- X\beta) - \beta (\lambda^{t}\lambda - t)= 0\\
+g(\beta) = \beta ^{T} \beta^{\star} - t <= 0\\
+\lambda^{\star} <= 0\\
+\lambda^{\star} g(\beta^{\star}) <= 0
+\end{eqnarray*}
+Note that if $\lambda^{\star}=0$, it means that the regularization does not functions in this case. But when $\lambda^{\star}<0$, \[\lambda^{\star} =\sqrt{ \frac{(y- X \beta^{\star})^{T}XX^{T}(y- X \beta^{\star})}{t} }\] by solving the equations above.
+
+(b)The explicit solution is solved when gradient equals zero.
+\begin{eqnarray*}
+\beta^{\star} = (X^{T} X - \lambda^{\star} I )^{-1} X^{T}y 
+\end{eqnarray*}
+The explicit solution exists if and only if when $X^{T} X - \lambda^{\star} I $ is inversible.
+\section*{Solution 3}
+The objective is to maximize $\textbf{w}^{T}( \textbf{m}_{2} - \textbf{m}_{1})$ with respect to $\textbf{w}$ subject to $\textbf{w}^{T} \textbf{w} = 1$.  This is equivalent to maximizing $L(\textbf{w}, \lambda) = \textbf{w}^{T}( \textbf{m}_{2} - \textbf{m}_{1}) + \lambda (\textbf{w}^{T} \textbf{w} - 1)$ with respect to $\textbf{w}, \lambda$.
+\begin{eqnarray*}
+\nabla_{\textbf{w}} =& (\textbf{m}_{2} - \textbf{m}_{1}) + \lambda \textbf{w} &= 0\\
+\nabla_{\lambda}=&\textbf{w}^{T} \textbf{w} - 1&= 0
+\end{eqnarray*}
+\begin{eqnarray*}
+\textbf{w} = - \frac{1}{\lambda}  (\textbf{m}_{2} - \textbf{m}_{1}) = \pm \frac{(\textbf{m}_{2} - \textbf{m}_{1})}{\sqrt{||(\textbf{m}_{2} - \textbf{m}_{1}) ||}}
+\end{eqnarray*}
+\end{flushleft}
+\end{document}

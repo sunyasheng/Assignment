@@ -1,0 +1,85 @@
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{bm}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\newenvironment{solution}[2][Solution]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+%If you want to title your bold things something different just make another thing exactly like this but replace "solution" with the name of the thing you want, like theorem or lemma or whatever
+
+\begin{document}
+
+
+\title{Homework 2}
+\author{Due Date: March 30, 2018}
+\date{}
+
+\maketitle
+
+\begin{solution}{1}
+(a) 
+\begin{align*}
+P(X_{1},X_{2},...,X_{n}|\lambda) = \frac{\lambda^{\sum_1^n X_i}e^{-n\lambda}}{X_1!X_2!...X_n!}\\
+\nabla_{\lambda}  P(X_{1},X_{2},...,X_{n}|\lambda) = \frac{e^{-n\lambda}\lambda^{\sum_1^n X_i-1}(\sum_1^n X_i  - n \lambda)}{X_1!X_2!...X_n!}\\
+\lambda = \frac{1}{n}\sum_{i=1}^nX_{i}
+\end{align*}
+Therefore, the maximum likehood of $\lambda$ is $\lambda = \frac{1}{n}\sum_{i=1}^nX_{i}
+$.
+\begin{align*}
+E(\widehat{\lambda}) = \frac{1}{n}\sum_{i=1}^nE(X_{i}) = \lambda
+\end{align*}
+So $\widehat{\lambda}$ is unbiased estimate of $\lambda$.\\
+(b)
+\begin{align*}
+p(\lambda|X_1,X_2,...,X_n) \sim \frac{\lambda^{\sum_1^n X_i}e^{-n\lambda}}{X_1!X_2!...X_n!}\frac{\beta^\alpha}{\Gamma(\alpha)}\lambda^{\alpha - 1}e^{-\beta\lambda} \sim \lambda^{\sum_1^n X_i+\alpha-1}e^{-(\beta+n)\lambda}
+\end{align*}
+Obviously, it conforms to $Gamma(\sum_1^n X_i+\alpha, \beta+n)$ Distribution. After normalization, we get
+\begin{align*}
+p(\lambda|X_1,X_2,...,X_n) = \frac{\beta^{\alpha+\sum_1^n X_i}}{\Gamma({\alpha+\sum_1^n X_i})}\lambda^{{\alpha+\sum_1^n X_i} - 1}e^{-(\beta+n)\lambda}
+\end{align*}
+(c)
+\begin{align*}
+\nabla_{\lambda} p(\lambda|X_1,X_2,...,X_n) = \frac{\beta^{\alpha+\sum_1^n X_i}}{\Gamma({\alpha+\sum_1^n X_i})}\lambda^{{\alpha+\sum_1^n X_i} - 2}e^{-(\beta+n)\lambda}(\alpha+\sum_1^n X_i - 1 - (\beta + n)\lambda)\\
+\lambda_{MAP} = \frac{\alpha+\sum_1^n X_i - 1}{\beta + n}
+\end{align*}
+
+\end{solution}
+
+\begin{solution}{2}
+(a)
+\begin{align*}
+P(Y="X"|A_{1} = 2, A_2 = 2) = \frac{P(Y = "X")P(A_2=2|Y="X")P(A_1=2|Y="X")}{P(A_1 = 2, A_2 = 2)}\\
+= \frac{0.66*0.25*0.25}{P(A_1 = 2, A_2 = 2)}\\
+P(Y="Y"|A_{1} = 2, A_2 = 2) = \frac{P(Y = "Y")P(A_2=2|Y="Y")P(A_1=2|Y="Y")}{P(A_1 = 2, A_2 = 2)}\\
+= \frac{0.33*0.5*0.5}{P(A_1 = 2, A_2 = 2)}
+\end{align*}
+The second item is larger, so Naive Bayes algorithm (with no smoothing) predicts "Y" here.
+After smoothing, the posterior becomes
+\begin{align*}
+P(Y="X"|A_{1} = 2, A_2 = 2) = \frac{P(Y = "X")P(A_2=2|Y="X")P(A_1=2|Y="X")}{P(A_1 = 2, A_2 = 2)}\\
+= \frac{0.6*0.2*0.2}{P(A_1 = 2, A_2 = 2)}\\
+P(Y="Y"|A_{1} = 2, A_2 = 2) = \frac{P(Y = "Y")P(A_2=2|Y="Y")P(A_1=2|Y="Y")}{P(A_1 = 2, A_2 = 2)}\\
+= \frac{0.4*0.33*0.33}{P(A_1 = 2, A_2 = 2)}
+\end{align*}
+The second item is still larger, the result stays the same.
+\end{solution}
+
+\begin{solution}{3}
+\begin{align*}
+P(X_{i}|Y=1) = \theta_{i1}^{X_{i}}(1-\theta_{i1})^{1-X_{i}}\\
+P(X_{i}|Y=0) = \theta_{i0}^{X_{i}}(1-\theta_{i0})^{1-X_{i}}\\
+P(Y=1|X) = \frac{1}{1 + exp(ln\frac{P(Y=0)P(X|Y=0)}{P(Y=1)P(X|Y=1)})}\\
+= \frac{1}{1 + exp(ln\frac{P(Y=0)}{P(Y=1)}+ln\frac{P(X|Y=0)}{P(X|Y=1)})}\\
+= \frac{1}{1 + exp(ln\frac{1-\pi}{\pi}+\sum_{i=1}^{n}ln(\frac{1-\theta_{i1}}{1-\theta_{i0}})+\sum_{i=1}^{n}(ln\frac{\theta_{i1}(1-\theta_{i0})}{\theta_{i0}(1-\theta_{i1})})X_{i})}\\
+=\frac{1}{1 + w_{0}+\sum_{i=1}^{n}(w_{i}X_{i})}
+\end{align*}
+It means that we also have the same form solution.
+\begin{align*}
+w_{0} = exp(ln\frac{1-\pi}{\pi}+\sum_{i=1}^{n}ln(\frac{1-\theta_{i1}}{1-\theta_{i0}})\\
+w_{1} = ln\frac{\theta_{i1}(1-\theta_{i0})}{\theta_{i0}(1-\theta_{i1})}
+\end{align*}
+\end{solution}
+\end{document}
